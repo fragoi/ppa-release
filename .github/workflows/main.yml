@@ -25,3 +25,12 @@ jobs:
         uses: fragoi/debuild-action@main
         with:
           ppa: ${{ inputs.ppa }}
+
+      - name: Upload source package
+        uses: fragoi/debsign-action@main
+        with:
+          ppa: ${{ inputs.ppa }}
+          gpg_key: ${{ secrets.SIGN_KEY }}
+          gpg_pass: ${{ secrets.SIGN_PASS }}
+          ssh_key: ${{ secrets.UPLOAD_PASS }}
+          ssh_pass: ${{ secrets.UPLOAD_PASS }}
