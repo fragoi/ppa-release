@@ -1,0 +1,27 @@
+name: Release PPA package
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: The upstream package URL
+        required: true
+        type: string
+      ppa:
+        description: The PPA for the release
+        required: true
+        type: string
+
+jobs:
+  release:
+    name: Release package
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Download upstream package
+        run: curl -LOJ "${{ inputs.url }}"
+
+      - name: Build source package
+        uses: fragoi/debuild-action@main
+        with:
+          ppa: ${{ inputs.ppa }}
