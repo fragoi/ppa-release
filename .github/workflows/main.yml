@@ -1,11 +1,15 @@
-name: Release PPA package
+name: Build and release PPA package
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
-      url:
-        description: The upstream package URL
+      tag:
+        description: The tag to build and release
         required: true
+        type: string
+      url:
+        description: The upstream source package URL
+        required: false
         type: string
       ppa:
         description: The PPA for the release
@@ -13,12 +17,16 @@ on:
         type: string
 
 jobs:
-  release:
-    name: Release package
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Download upstream package
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.tag }}
+
+      - if: ${{ inputs.url }}
+        name: Download upstream source
         run: curl -LOJ "${{ inputs.url }}"
 
       - name: Build source package
