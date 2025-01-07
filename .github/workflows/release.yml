@@ -1,0 +1,36 @@
+name: Build and release PPA package
+
+on:
+  workflow_call:
+    inputs:
+      package:
+        description: The name of the package
+        required: false
+        type: string
+      ppa:
+        description: The PPA for the release
+        required: true
+        type: string
+
+env:
+  # this is to properly find the archive/directory
+  DEBPACKAGE: ${{ inputs.package }}
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Build source package
+        uses: fragoi/debuild-action@main
+        with:
+          ppa: ${{ inputs.ppa }}
+
+      - name: Upload source package
+        uses: fragoi/debsign-action@main
+        with:
+          ppa: ${{ inputs.ppa }}
+          gpg_key: ${{ secrets.SIGN_KEY }}
+          gpg_pass: ${{ secrets.SIGN_PASS }}
+          ssh_key: ${{ secrets.UPLOAD_KEY }}
+          ssh_pass: ${{ secrets.UPLOAD_PASS }}
